@@ -1,4 +1,5 @@
 const restify = require('restify');
+const request = require('request');
 const builder = require('botbuilder');
 
 // Setup Restify Server
@@ -16,7 +17,19 @@ const connector = new builder.ChatConnector({
 // Listen for messages from users 
 server.post('/api/messages', connector.listen());
 
+const options = {
+  uri:　process.env.SLACK_WEBFOOK_URL,
+  headers: {
+    "Content-type": "application/json",
+  },
+  json: {
+    "text":"我々はかしこいのでこのようなこともできるのです。ふんす！:triumph:"
+  }
+};
+
+
 // Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
 const bot = new builder.UniversalBot(connector, function (session) {
+    request.post(options, function(error, response, body){});
     session.send("You said: %s", session.message.text);
 });
