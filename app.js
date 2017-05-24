@@ -29,7 +29,7 @@ function getOptions(message,analized) {
       "Content-type": "application/json",
     },
     json: {
-      "text":"こんな風に変えると\n> " + message + "\nについて我々はかしこいので知っているのです。ふんす！:triumph: \n教えて欲しければカレー:curry:を持ってくるのです。\n",
+      "text":"お前が言った言葉\n> " + message + "\nについて我々はかしこいので知っているのです。ふんす！:triumph: \n教えて欲しければ酒:beers:をたんまり持ってくるのです。\n",
       "link_names":true,
       channel:"#github"
     }
