@@ -53,7 +53,7 @@ const bot = new builder.UniversalBot(connector, [
         if (results && results.response) {
             // User answered question.
             request.post(getOptions(results.response), function(error, response, body){});
-            session.send("Hello %s.", results.response);
+            session.send("なのです。");
         } else {
             // User said never mind.
             session.send("OK. Goodbye.");
