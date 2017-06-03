@@ -48,6 +48,7 @@ const bot = new builder.UniversalBot(connector, [
     // }
     function (session) {
         builder.Prompts.text(session, "ドーモ。こんにちは。コノハちゃん博士です。教えて欲しいことがあれば言ってみるのです。");
+        request.post(getPromptsDialog(), function(error, response, body){});
     },
     function (session, results) {
         if (results && results.response) {
@@ -70,6 +71,20 @@ function getOptions(message,analized) {
     },
     json: {
       "text":"お前が言った\n> " + message + "\nについて我々はかしこいので知っているのです。ふんす！:triumph: \n教えて欲しければカレー:curry:を持ってくるのです。\n",
+      "link_names":true,
+      channel:"#github"
+    }
+  };
+  return options;
+}
+function getPromptsDialog() {
+  let options = {
+    uri:　process.env.SLACK_WEBFOOK_URL,
+    headers: {
+      "Content-type": "application/json",
+    },
+    json: {
+      "text":"ドーモ。ミミちゃん助手です。\n我々はかしこいのでお前の知りたいことについて知っているかもしれないのです。",
       "link_names":true,
       channel:"#github"
     }
