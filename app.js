@@ -6,8 +6,8 @@ const builder = require('botbuilder');
 if (!process.env.SLACK_WEBFOOK_URL) {
   require('dotenv').config();
 }
-console.log(process.env);
-// Setup Restify Server
+//console.log(process.env);
+// Setup Restify Server -- サーバー起動
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
    console.log('%s listening to %s', server.name, server.url); 
@@ -19,9 +19,49 @@ const connector = new builder.ChatConnector({
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 
-// Listen for messages from users 
+// Listen for messages from users -- Botが下記URLに対するPOSTを待つ
 server.post('/api/messages', connector.listen());
 
+
+
+// Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
+const bot = new builder.UniversalBot(connector, [
+    // function (session) {
+    //   // メッセージ送信
+    //   var msg = new builder.Message(session);
+    //   msg.text("このようにもメッセージが作れる");
+    //   session.send(msg);
+    //   // このように書いても同じ
+    //   session.send({
+    //      type: 'message',
+    //      text: "Hello World!"
+    //   });
+    // },
+    // function (session) {
+    //   request.post(getOptions(session.message.text), function(error, response, body){}); // slackのwebfookに対してPOST
+    //   console.log(session.message.text);
+    //   if (session.message.text === '天気') {
+    //     session.send("天気と入力されたら固定でこれを出力する");  
+    //   } else {
+    //     session.send("You said: %s", session.message.text);
+    //   }
+    // }
+    function (session) {
+        builder.Prompts.text(session, "ドーモ。こんにちは。コノハちゃん博士です。教えて欲しいことがあれば言ってみるのです。");
+    },
+    function (session, results) {
+        if (results && results.response) {
+            // User answered question.
+            request.post(getOptions(results.response), function(error, response, body){});
+            session.send("Hello %s.", results.response);
+        } else {
+            // User said never mind.
+            session.send("OK. Goodbye.");
+        }
+    }
+    ]);
+
+// ミミちゃん助手にPOST
 function getOptions(message,analized) {
   let options = {
     uri:　process.env.SLACK_WEBFOOK_URL,
@@ -29,17 +69,10 @@ function getOptions(message,analized) {
       "Content-type": "application/json",
     },
     json: {
-      "text":"お前が言った言葉\n> " + message + "\nについて我々はかしこいので知っているのです。ふんす！:triumph: \n教えて欲しければピザ:pizza:を持ってくるのです。\n",
+      "text":"お前が言った\n> " + message + "\nについて我々はかしこいので知っているのです。ふんす！:triumph: \n教えて欲しければカレー:curry:を持ってくるのです。\n",
       "link_names":true,
       channel:"#github"
     }
   };
   return options;
 }
-
-
-// Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
-const bot = new builder.UniversalBot(connector, function (session) {
-    request.post(getOptions(session.message.text), function(error, response, body){});
-    session.send("You said: %s", session.message.text);
-});
